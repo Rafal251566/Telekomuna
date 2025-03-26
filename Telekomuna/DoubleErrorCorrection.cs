@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks.Dataflow;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace HCSingleErrorCorrection
+namespace HCDoubleErrorCorrection
 {
-    public class SingleErrorCorrection
+    class DoubleErrorCorrection
     {
         private static readonly int[,] matrix = {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0},
-        {1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0},
-        {1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0},
-        {1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1}
+        {1, 1, 1, 1, 1, 1, 1, 1,   1, 0, 0, 0, 0, 0, 0, 0},
+        {1, 1, 1, 1, 0, 0, 0, 0,   0, 1, 0, 0, 0, 0, 0, 0},
+        {1, 1, 0, 0, 1, 1, 0, 0,   0, 0, 1, 0, 0, 0, 0, 0},
+        {1, 0, 1, 0, 1, 0, 1, 0,   0, 0, 0, 1, 0, 0, 0, 0},
+        {0, 1, 0, 0, 0, 1, 0, 1,   0, 0, 0, 0, 1, 0, 0, 0},
+        {0, 0, 1, 0, 0, 1, 1, 0,   0, 0, 0, 0, 0, 1, 0, 0}, 
+        {0, 0, 0, 1, 0, 1, 1, 0,   0, 0, 0, 0, 0, 0, 1, 0},
+        {0, 0, 0, 0, 1, 0, 1, 1,   0, 0, 0, 0, 0, 0, 0, 1}
     };
 
         public static void convertToInt(List<int> message, string text)
@@ -50,7 +55,6 @@ namespace HCSingleErrorCorrection
                 Console.WriteLine("Bit count is not correct!");
                 return;
             }
-
             bool isCorrect = true;
             List<int> error = new List<int>();
 
@@ -67,37 +71,50 @@ namespace HCSingleErrorCorrection
 
         public static void correctError(List<int> message, List<int> error)
         {
-            bool errorFound = false;
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(0); j++)
+                {
+                    if (error[j] == matrix[j, i]) break;
+                    if (j == matrix.GetLength(0) - 1)
+                    {
+                        int temp = message[i];
+                        switchBit(ref temp);
+                        message[i] = temp;
+                        return;
+                    }
+                }
+            }
 
             for (int i = 0; i < matrix.GetLength(1); i++)
             {
-                errorFound = true;
-                for (int j = 0; j < matrix.GetLength(0); j++)
+                for (int j = i+1; j < matrix.GetLength(1); j++)
                 {
-                    if (error[j] != matrix[j, i])
+                    for (int k = 0; k < matrix.GetLength(0); k++)
                     {
-                        errorFound = false;
-                        break;
+                        if ((matrix[k, i] ^ matrix[k, j]) != error[k]) break;
+                        if (k == matrix.GetLength(0) - 1)
+                        {
+                            int temp = message[i];
+                            switchBit(ref temp);
+                            message[i] = temp;
+
+                            temp = message[j];
+                            switchBit(ref temp);
+                            message[j] = temp;
+                            return;
+                        }
                     }
-                }
-                if (errorFound)
-                {
-                    int temp = message[i];
-                    switchBit(ref temp);
-                    message[i] = temp;
-                    break;
                 }
             }
         }
-
 
         public static void switchBit(ref int bit)
         {
             bit = 1 - bit;
         }
 
-
-        public static void RunSEC()
+        public static void RunDEC()
         {
             List<int> message = new List<int>();
             Console.WriteLine("Type a message containing 8 bits: ");
