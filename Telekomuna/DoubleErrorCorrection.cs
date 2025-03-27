@@ -140,6 +140,7 @@ namespace HCDoubleErrorCorrection
             input = Console.ReadLine();
 
             convertToInt(wrongMessage, input);
+            Console.WriteLine(wrongMessage.Count);
             checkForError(wrongMessage);
 
             Console.WriteLine("\nCorrected message:");
@@ -147,5 +148,55 @@ namespace HCDoubleErrorCorrection
 
             Console.ReadKey();
         }
+
+        public static void RunFileEncoding(string[] fileContent)
+        {
+            string path = "encodedMessages.txt";
+            try
+            {
+                File.WriteAllText(path, "");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("File not found!");
+                return;
+            }
+            List<int> message = new List<int>();
+            for (int i = 0; i < fileContent.Length; i++)
+            {
+                message.Clear();
+                convertToInt(message, fileContent[i]);
+                bitCoding(message);
+                string list = string.Join("", message);
+                File.AppendAllText(path, list);
+                File.AppendAllText(path, "\n");
+            }
+        }
+
+        public static void RunFileDecodingDEC(string[] fileContent)
+        {
+            string path = "decodedMessages.txt";
+            try
+            {
+                File.WriteAllText(path, "");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("File not found!");
+                return;
+            }
+            List<int> message = new List<int>();
+            for (int i = 0; i < fileContent.Length; i++)
+            {
+                message.Clear();
+                convertToInt(message, fileContent[i]);
+                checkForError(message);
+                message = message.Take(8).ToList();
+                string list = string.Join("", message);
+                File.AppendAllText(path, list);
+                File.AppendAllText(path, "\n");
+            }
+        }
+
     }
 }
