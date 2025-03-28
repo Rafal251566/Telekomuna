@@ -27,13 +27,13 @@ namespace HCSingleErrorCorrection
             if (message.Count == 0) return;
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                int parrityBit = getParrityBit(message, i);
+                int parrityBit = getParityBit(message, i);
 
                 message.Add(parrityBit);
             }
         }
 
-        public static int getParrityBit(List<int> message, int row)
+        public static int getParityBit(List<int> message, int row)
         {
             int sum = 0;
             for (int i = 0; i < message.Count; i++)
@@ -56,7 +56,7 @@ namespace HCSingleErrorCorrection
 
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                int checkedParrity = getParrityBit(message, i);
+                int checkedParrity = getParityBit(message, i);
                 error.Add(checkedParrity);
                 if (checkedParrity == 1) isCorrect = false;
             }
