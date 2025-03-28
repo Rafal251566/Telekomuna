@@ -75,7 +75,7 @@ namespace HCDoubleErrorCorrection
             {
                 for (int j = 0; j < matrix.GetLength(0); j++)
                 {
-                    if (error[j] == matrix[j, i]) break;
+                    if (error[j] != matrix[j, i]) break;
                     if (j == matrix.GetLength(0) - 1)
                     {
                         int temp = message[i];
@@ -149,7 +149,7 @@ namespace HCDoubleErrorCorrection
             Console.ReadKey();
         }
 
-        public static void RunFileEncoding(string[] fileContent)
+        public static void RunFileEncoding(byte[] fileContent)
         {
             string path = "encodedMessages.txt";
             try
@@ -162,10 +162,17 @@ namespace HCDoubleErrorCorrection
                 return;
             }
             List<int> message = new List<int>();
-            for (int i = 0; i < fileContent.Length; i++)
+            List<string> bits = new List<string>();
+            foreach (byte b in fileContent)
+            {
+                string binaryString = Convert.ToString(b, 2).PadLeft(8, '0');
+                bits.Add(binaryString);
+                Console.WriteLine(binaryString);
+            }
+            for (int i = 0; i < bits.Count; i++)
             {
                 message.Clear();
-                convertToInt(message, fileContent[i]);
+                convertToInt(message, bits[i]);
                 bitCoding(message);
                 string list = string.Join("", message);
                 File.AppendAllText(path, list);
@@ -186,6 +193,7 @@ namespace HCDoubleErrorCorrection
                 return;
             }
             List<int> message = new List<int>();
+            byte[] decodedBytes = new byte[fileContent.Length];
             for (int i = 0; i < fileContent.Length; i++)
             {
                 message.Clear();
@@ -193,8 +201,11 @@ namespace HCDoubleErrorCorrection
                 checkForError(message);
                 message = message.Take(8).ToList();
                 string list = string.Join("", message);
-                File.AppendAllText(path, list);
-                File.AppendAllText(path, "\n");
+                Console.WriteLine(list);
+                byte decodedByte = Convert.ToByte(list, 2);
+                decodedBytes[i] = decodedByte;
+
+                File.WriteAllBytes(path, decodedBytes);
             }
         }
 

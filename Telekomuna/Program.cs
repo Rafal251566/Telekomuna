@@ -35,7 +35,7 @@ namespace HammingCode
                     string filePath = "messages.txt";
                     try
                     {
-                        string[] lines = File.ReadAllLines(filePath);
+                        byte[] lines = File.ReadAllBytes(filePath);
                         DoubleErrorCorrection.RunFileEncoding(lines);
                     }
                     catch (Exception) {
@@ -49,7 +49,7 @@ namespace HammingCode
                         string[] lines = File.ReadAllLines(filePath);
                         DoubleErrorCorrection.RunFileDecodingDEC(lines);
                     }
-                    catch (Exception)
+                    catch (IOException)
                     {
                         Console.WriteLine("File not found!");
                     }
